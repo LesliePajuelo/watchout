@@ -4,7 +4,7 @@
 Feel free to use it if you like. */
 
 .asteroid {
-  img: "asteroid.png";
+  background-image: "asteroid.png";
 }
 
 .gameboard {

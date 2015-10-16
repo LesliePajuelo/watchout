@@ -34,15 +34,9 @@ var gameBoard = d3.select('.gameboard').append('svg')
   y : function(){return Math.random() * gameOptions.height;},
   radius: 10
  };
-// _.range(0,gameOptions.nEnemies).map (i) ->
-//     {
-//       id: i
-//       x: Math.random()*100
-//       y: Math.random()*100
-//     }
 
 //draw enemies as svg
-var asteroid = gameBoard.selectAll(".asteroids")
+var asteroid = gameBoard.selectAll(".asteroid")
                         .data(enemyData.amount)
                         .enter()
                         .append("circle")
@@ -52,7 +46,16 @@ var asteroid = gameBoard.selectAll(".asteroids")
                         .style('fill', 'red');
 
 //move the enemies
-
+var move = function(){
+  asteroid
+  .transition()
+  .duration(2000)
+  .ease("linear")
+  .attr('cx', function(){return Math.random() * gameOptions.width})
+  .attr('cy', function(){return Math.random() * gameOptions.height})
+  .each("end", move);
+};
+move();
 //make the player
 
 //drag the player
