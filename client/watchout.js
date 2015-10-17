@@ -1,10 +1,11 @@
 // start slingin' some d3 here.
 
 //Object with the defaults
+//TODO give window properties
 var gameOptions = {
   //window size\
-  width : 800,
-  height : 600
+  width : (window.innerWidth - 50),
+  height : (window.innerHeight - 100)
   //number enemies
   //size of enemies
   //mouse location  
@@ -14,6 +15,7 @@ var gameOptions = {
   // nEnemies: 30
   // padding: 20
 };
+
 
 var gameStats = {
   highScore: 0,
@@ -37,7 +39,42 @@ var gameBoard = d3.select('.gameboard').append('svg')
 // // d3.select('.hero').attr('cx', mouse.x).attr('cy', mouse.y)
 // });
 
- //TODO give window properties
+ //pattern definition
+ 
+ var config = {
+    "avatar_size" : 50
+};
+
+var nickdefs = gameBoard.append('svg:defs');
+// nick defs
+ nickdefs.append('svg:pattern')
+     .attr('id', 'nick60')
+     .attr('width', config.avatar_size)
+     .attr('height', config.avatar_size)
+     .attr('patternUnits', 'objectBoundingBox') 
+     .append('svg:image')
+     .attr('xlink:href', 'nick60.png')
+     .attr('width', config.avatar_size)
+     .attr('height', config.avatar_size)
+     .attr('x', 0)
+     .attr('y', 0);
+
+ var belladefs = gameBoard.append('svg:defs');
+
+ // bella defs
+ belladefs.append('svg:pattern')
+     .attr('id', 'bella50')
+     .attr('width', config.avatar_size)
+     .attr('height', config.avatar_size)
+     .attr('patternUnits', 'objectBoundingBox')
+     .append('svg:image')
+     .attr('xlink:href', 'bella50.jpg')
+     .attr('width', config.avatar_size)
+     .attr('height', config.avatar_size)
+     .attr('x', 0)
+     .attr('y', 0);
+
+
 
 
  // create enemy data
@@ -45,69 +82,72 @@ var gameBoard = d3.select('.gameboard').append('svg')
   amount : d3.range(10),
   x : function(){return Math.random() * gameOptions.width;},
   y : function(){return Math.random() * gameOptions.height;},
-  radius: 10
+  radius: 25
  };
 
 //draw enemies as svg
-var asteroid = gameBoard.selectAll(".asteroid")
+var asteroid = gameBoard.selectAll('.asteroid')
                         .data(enemyData.amount)
                         .enter()
-                        .append("circle")
-                        .attr("cx", enemyData.x)
-                        .attr("cy", enemyData.y)
-                        .attr("r", enemyData.radius)
-                        .style('fill', 'red');
+                        .append('circle')
+                        .attr('class','asteroids')
+                        .attr('cx', enemyData.x)
+                        .attr('cy', enemyData.y)
+                        .attr('r', enemyData.radius)
+                        .style('fill', "url(#nick60")
+                        .style('transform', 'rotate(90)');
 
 //move the enemies
 var move = function(){
   asteroid
   .transition()
-  .duration(2000)
-  .ease("linear")
+  .duration(1000)
+  //.ease('quad')
   .attr('cx', function(){return (Math.random() * gameOptions.width) - enemyData.radius;})
   .attr('cy', function(){return (Math.random() * gameOptions.height) - enemyData.radius;})
-  .each("end", move);
+  .each('end', move);
 };
+
 move();
 
  var playerData = {
   amount : d3.range(1), //TODO make this make sense
   x : function(){return gameOptions.width / 2;},
   y : function(){return gameOptions.height / 2;},
-  radius: 10
+  radius: 25,
+  fill: 'blue'
  };
 
-
-//draw enemies as svg
 
 //drag the player
 var drag = d3.behavior.drag()
     //.origin(function(d) { return d; })
-    .on("drag", dragmove);
+    .on('drag', dragmove);
 
 function dragmove(d) {
   d3.select(this)
-      .attr("cx", d.x = Math.max(playerData.radius, Math.min(gameOptions.width - playerData.radius, d3.event.x)))
-      .attr("cy", d.y = Math.max(playerData.radius, Math.min(gameOptions.height - playerData.radius, d3.event.y)));
+      .attr('cx', d.x = Math.max(playerData.radius, Math.min(gameOptions.width - playerData.radius, d3.event.x)))
+      .attr('cy', d.y = Math.max(playerData.radius, Math.min(gameOptions.height - playerData.radius, d3.event.y)));
 }
 
 
-var player = gameBoard.selectAll(".player")
+var player = gameBoard.selectAll('.player')
                         .data(playerData.amount)
                         .enter()
-                        .append("circle")
-                        .attr("cx", playerData.x)
-                        .attr("cy", playerData.y)
-                        .attr("r", playerData.radius)
-                        .attr('fill', 'black')
+                        .append('circle')
+                        .attr('cx', playerData.x)
+                        .attr('cy', playerData.y)
+                        .attr('r', playerData.radius)
+                        .attr('fill', "url(#bella50")
                         .call(drag);
+
 
 
 
 //collision detection
 var checkCollisions = function(){
   
-  d3.select('.gameboard').style('background-color', 'white');
+  d3.select('svg').style('background-color', 'white');
   asteroid.each(function(){
     //get asteroid coords
     var asteroidX = this.cx.animVal.value;
@@ -126,7 +166,7 @@ var checkCollisions = function(){
       d3.select('.collisions').text('Collisions: ' + gameStats.collision);
       gameStats.currentScore = 0;
       d3.select('.current').text('Current score: ' + gameStats.currentScore);
-      d3.select('.gameboard').style('background-color', 'red');
+      d3.select('svg').style('background-color', 'red');
      }
   });
 };
@@ -136,7 +176,7 @@ var scoreKeeper = function() {
   d3.select('.current').text('Current score: ' + gameStats.currentScore);
   gameStats.highScore = Math.max(gameStats.currentScore, gameStats.highScore);
   d3.select('.high').text('High score: ' + gameStats.highScore);
-}
+};
 
 d3.timer(checkCollisions);
 setInterval(scoreKeeper,500);
