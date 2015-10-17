@@ -3,15 +3,18 @@
 /* Note: an asteroid image is included in this repo.
 Feel free to use it if you like. */
 
-.gameboard {
-  border-color: 1px solid red;
-}
-
-.player {
-border-radius: 20;
-border-color: 'blue';
-}
-
 body {
   font-family: 'Press Start 2P', cursive;
+  font-size: 20;
+}
+div {
+  display: inline-block;
+  padding: 10px 20px;
+}
+div.watchout {
+  float: left;
+}
+
+div.high, div.current, div.collisions {
+  float: right;
 }

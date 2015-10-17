@@ -3,19 +3,14 @@
 //Object with the defaults
 //TODO give window properties
 var gameOptions = {
-  //window size\
   width : (window.innerWidth - 50),
-  height : (window.innerHeight - 100)
-  //number enemies
-  //size of enemies
-  //mouse location  
-  //gameOptions =
-  // height: 450
-  // width: 700
-  // nEnemies: 30
-  // padding: 20
+  height : (window.innerHeight - 100),
+  numberOfNicks: 10,
+  radius: 25,
+  randomX: function(){return (Math.random() * (gameOptions.width - (nickData.radius * 2)));},
+  randomY: function(){return (Math.random() * (gameOptions.height - (nickData.radius * 2)));},
+  background: 'linear-gradient(45deg, white, #01243B 100%) no-repeat'
 };
-
 
 var gameStats = {
   highScore: 0,
@@ -23,30 +18,19 @@ var gameStats = {
   collision: 0
 };
 
-
-
 //game board
 var gameBoard = d3.select('.gameboard').append('svg')
                 .attr('width', gameOptions.width)
                 .attr('height', gameOptions.height)
-                .style('border', '1px solid red');
+                .style('background-color', gameOptions.background);
 
-
-// gameBoard.on('mousemove', function() {
-// var loc = d3.mouse(this);
-// var mouse = {x: loc[0], y: loc[1]};
-// //TODO make dot follow mouse 
-// // d3.select('.hero').attr('cx', mouse.x).attr('cy', mouse.y)
-// });
-
- //pattern definition
  
  var config = {
     "avatar_size" : 50
 };
 
+// definitions pattern for Nick
 var nickdefs = gameBoard.append('svg:defs');
-// nick defs
  nickdefs.append('svg:pattern')
      .attr('id', 'nick60')
      .attr('width', config.avatar_size)
@@ -59,9 +43,8 @@ var nickdefs = gameBoard.append('svg:defs');
      .attr('x', 0)
      .attr('y', 0);
 
+// definitions pattern for Bella
  var belladefs = gameBoard.append('svg:defs');
-
- // bella defs
  belladefs.append('svg:pattern')
      .attr('id', 'bella50')
      .attr('width', config.avatar_size)
@@ -77,91 +60,85 @@ var nickdefs = gameBoard.append('svg:defs');
 
 
 
- // create enemy data
- var enemyData = {
-  amount : d3.range(10),
-  x : function(){return Math.random() * gameOptions.width;},
-  y : function(){return Math.random() * gameOptions.height;},
-  radius: 25
+ // create Nick data
+ var nickData = {
+  amount : d3.range(gameOptions.numberOfNicks),
+  x : gameOptions.randomX,
+  y : gameOptions.randomY,
+  radius: gameOptions.radius
  };
 
-//draw enemies as svg
-var asteroid = gameBoard.selectAll('.asteroid')
-                        .data(enemyData.amount)
+// create nick
+var nick = gameBoard.selectAll('.nick')
+                        .data(nickData.amount)
                         .enter()
                         .append('circle')
-                        .attr('class','asteroids')
-                        .attr('cx', enemyData.x)
-                        .attr('cy', enemyData.y)
-                        .attr('r', enemyData.radius)
+                        .attr('class','nicks')
+                        .attr('cx', nickData.x)
+                        .attr('cy', nickData.y)
+                        .attr('r', nickData.radius)
                         .style('fill', "url(#nick60")
-                        .style('transform', 'rotate(90)');
+                        .style('stroke', 'black')
+                        .style('stroke-width', '2');
 
 //move the enemies
 var move = function(){
-  asteroid
+  nick
   .transition()
   .duration(1000)
-  //.ease('quad')
-  .attr('cx', function(){return (Math.random() * gameOptions.width) - enemyData.radius;})
-  .attr('cy', function(){return (Math.random() * gameOptions.height) - enemyData.radius;})
+  .attr('cx', gameOptions.randomX)
+  .attr('cy', gameOptions.randomY)
   .each('end', move);
 };
 
 move();
 
- var playerData = {
-  amount : d3.range(1), //TODO make this make sense
+ var bellaData = {
+  amount : d3.range(1),
   x : function(){return gameOptions.width / 2;},
   y : function(){return gameOptions.height / 2;},
-  radius: 25,
-  fill: 'blue'
+  radius: gameOptions.radius
  };
 
-
-//drag the player
+//drag the bella
 var drag = d3.behavior.drag()
-    //.origin(function(d) { return d; })
     .on('drag', dragmove);
 
 function dragmove(d) {
   d3.select(this)
-      .attr('cx', d.x = Math.max(playerData.radius, Math.min(gameOptions.width - playerData.radius, d3.event.x)))
-      .attr('cy', d.y = Math.max(playerData.radius, Math.min(gameOptions.height - playerData.radius, d3.event.y)));
+      .attr('cx', d.x = Math.max(bellaData.radius, Math.min(gameOptions.width - bellaData.radius, d3.event.x)))
+      .attr('cy', d.y = Math.max(bellaData.radius, Math.min(gameOptions.height - bellaData.radius, d3.event.y)));
 }
 
-
-var player = gameBoard.selectAll('.player')
-                        .data(playerData.amount)
+var bella = gameBoard.selectAll('.bella')
+                        .data(bellaData.amount)
                         .enter()
                         .append('circle')
-                        .attr('cx', playerData.x)
-                        .attr('cy', playerData.y)
-                        .attr('r', playerData.radius)
+                        .attr('cx', bellaData.x)
+                        .attr('cy', bellaData.y)
+                        .attr('r', bellaData.radius)
                         .attr('fill', "url(#bella50")
+                        .style('stroke', 'yellow')
+                        .style('stroke-width', '2')
                         .call(drag);
-
-
-
 
 //collision detection
 var checkCollisions = function(){
   
-  d3.select('svg').style('background-color', 'white');
-  asteroid.each(function(){
-    //get asteroid coords
-    var asteroidX = this.cx.animVal.value;
-    var asteroidY = this.cy.animVal.value;
+  d3.select('svg')
+  .style('background', gameOptions.background);
 
-    //get player location
-    var playerX = player[0][0].cx.animVal.value;
-    var playerY = player[0][0].cy.animVal.value;
+  nick.each(function(){
+    //get nick locations
+    var nickX = this.cx.animVal.value;
+    var nickY = this.cy.animVal.value;
 
+    //get bella location
+    var bellaX = bella[0][0].cx.animVal.value;
+    var bellaY = bella[0][0].cy.animVal.value;
     
-    //if distance is less than enemy radius
-     //Math.hypot 
-     //then change flag to collide
-     if(Math.hypot(asteroidX - playerX, asteroidY - playerY) < (enemyData.radius * 2)){
+    //if bella distance is less than nick radius
+     if(Math.hypot(nickX - bellaX, nickY - bellaY) < (nickData.radius * 2)){
       gameStats.collision++;
       d3.select('.collisions').text('Collisions: ' + gameStats.collision);
       gameStats.currentScore = 0;
@@ -180,8 +157,4 @@ var scoreKeeper = function() {
 
 d3.timer(checkCollisions);
 setInterval(scoreKeeper,500);
-// d3.timer(scoreKeeper,1000);
-//keep track of score
 
-
-//update scoreboard
