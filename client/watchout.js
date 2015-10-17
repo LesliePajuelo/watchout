@@ -106,8 +106,8 @@ var player = gameBoard.selectAll(".player")
 
 //collision detection
 var checkCollisions = function(){
-  var collided = false;
-
+  
+  d3.select('.gameboard').style('background-color', 'white');
   asteroid.each(function(){
     //get asteroid coords
     var asteroidX = this.cx.animVal.value;
@@ -122,11 +122,11 @@ var checkCollisions = function(){
      //Math.hypot 
      //then change flag to collide
      if(Math.hypot(asteroidX - playerX, asteroidY - playerY) < (enemyData.radius * 2)){
-      collided = true;
       gameStats.collision++;
       d3.select('.collisions').text('Collisions: ' + gameStats.collision);
       gameStats.currentScore = 0;
       d3.select('.current').text('Current score: ' + gameStats.currentScore);
+      d3.select('.gameboard').style('background-color', 'red');
      }
   });
 };
