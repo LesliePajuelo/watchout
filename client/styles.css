@@ -6,6 +6,9 @@ Feel free to use it if you like. */
 .asteroid {
   background-image: "asteroid.png";
 }
+.player {
+  background-image: "asteroid.png";
+}
 
 .gameboard {
   border-color: 1px solid red;
