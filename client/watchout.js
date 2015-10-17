@@ -131,15 +131,15 @@ var checkCollisions = function(){
   });
 };
 
-// var scoreKeeper = function() {
-//   gameStats.currentScore++;
-//   d3.select('.current').text('Current score: ' + gameStats.currentScore);
-//   gameStats.highScore = Math.max(gameStats.currentScore, gameStats.highScore);
-//   d3.select('.high').text('High score: ' + gameStats.highScore);
-// }
+var scoreKeeper = function() {
+  gameStats.currentScore++;
+  d3.select('.current').text('Current score: ' + gameStats.currentScore);
+  gameStats.highScore = Math.max(gameStats.currentScore, gameStats.highScore);
+  d3.select('.high').text('High score: ' + gameStats.highScore);
+}
 
-// d3.timer(checkCollisions);
-// setInterval(scoreKeeper,500);
+d3.timer(checkCollisions);
+setInterval(scoreKeeper,500);
 // d3.timer(scoreKeeper,1000);
 //keep track of score
 
