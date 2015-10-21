@@ -1,0 +1,24 @@
+/* your beautiful css styling goes here! */
+
+/* Note: an asteroid image is included in this repo.
+Feel free to use it if you like. */
+
+body {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 20;
+}
+div {
+  display: inline-block;
+  padding: 10px 20px;
+}
+div.watchout {
+  float: left;
+}
+
+div.high, div.current, div.collisions {
+  float: right;
+}
+
+.aloning {
+    position: absolute; width: 100%; height: 100%; background: url('aloning.gif') no-repeat center center;
+}
